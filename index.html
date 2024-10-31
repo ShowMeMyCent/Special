@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>University Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Keyframe animation for the button click */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+    </style>
+  </head>
+  <body class="flex flex-col items-center justify-center h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+      <h1 class="text-2xl font-bold mb-4">Kok Pacar Aku Ngilangg????</h1>
+
+      <button
+        id="toggleSchedule"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 mb-4"
+      >
+        Dia lagi ngapain sih!😠😠
+      </button>
+
+      <div
+        id="schedule"
+        class="mt-4 p-4 text-center hidden bg-gray-100 rounded-lg"
+      >
+        <p id="day" class="text-lg font-semibold"></p>
+        <p id="time" class="text-gray-600"></p>
+        <p id="activity" class="mt-2 text-gray-800"></p>
+      </div>
+    </div>
+
+    <script>
+      const scheduleData = {
+        Monday: { time: "09:00 - 12:00", activity: "Mathematics Class" },
+        Tuesday: { time: "10:00 - 11:30", activity: "Physics Lab" },
+        Wednesday: { time: "13:00 - 15:00", activity: "Programming Lecture" },
+        Thursday: { time: "08:30 - 09:00", activity: "Electrical Engineering" },
+        Friday: { time: "14:00 - 16:00", activity: "Group Study" },
+      };
+
+      const button = document.getElementById("toggleSchedule");
+      const scheduleDiv = document.getElementById("schedule");
+      let isScheduleVisible = false;
+
+      // Helper function to convert time to a Date object for comparison
+      function convertToDate(timeString) {
+        const [hours, minutes] = timeString.split(":").map(Number);
+        const now = new Date();
+        return new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          hours,
+          minutes
+        );
+      }
+
+      // Function to check if the current time is within the schedule's time range
+      function isWithinTimeRange(timeRange) {
+        const [startTime, endTime] = timeRange.split(" - ");
+        const now = new Date();
+        const start = convertToDate(startTime);
+        const end = convertToDate(endTime);
+
+        return now >= start && now <= end;
+      }
+
+      button.addEventListener("click", () => {
+        const currentDay = new Date().toLocaleDateString("en-US", {
+          weekday: "long",
+        });
+        const schedule = scheduleData[currentDay];
+
+        if (!isScheduleVisible) {
+          if (schedule && isWithinTimeRange(schedule.time)) {
+            // Display the schedule when the current time is within the time range
+            document.getElementById("day").textContent = currentDay;
+            document.getElementById("time").textContent = schedule.time;
+            document.getElementById("activity").textContent = schedule.activity;
+          } else {
+            // Display message when no schedule is available for the current time
+            document.getElementById("day").textContent = currentDay;
+            document.getElementById("time").textContent = "Dia lagi free nihh!";
+            document.getElementById("activity").textContent =
+              "Mungkin lagi tidur atau main game, coba chat/telpon aja!";
+          }
+          scheduleDiv.classList.remove("hidden");
+          scheduleDiv.classList.add("fade-in");
+          button.textContent = "Owalahhh😍😍";
+        } else {
+          scheduleDiv.classList.add("hidden");
+          button.textContent = "Dia lagi ngapain sih!😠😠";
+        }
+
+        isScheduleVisible = !isScheduleVisible;
+      });
+    </script>
+  </body>
+</html>
