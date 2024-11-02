@@ -45,11 +45,28 @@
 
     <script>
       const scheduleData = {
-        Monday: { time: "09:00 - 12:00", activity: "Mathematics Class" },
-        Tuesday: { time: "10:00 - 11:30", activity: "Physics Lab" },
-        Wednesday: { time: "13:00 - 15:00", activity: "Programming Lecture" },
-        Thursday: { time: "08:30 - 09:00", activity: "Electrical Engineering" },
-        Friday: { time: "14:00 - 16:00", activity: "Group Study" },
+        Senin: [
+          { time: "08:30 - 11:30", activity: "Pengantar Rekayasa Dan Desain" },
+        ],
+        Selasa: [
+          { time: "09:30 - 12:30", activity: "Kalkulus" },
+          { time: "12:30 - 15:30", activity: "Praktikum Fisika" },
+          { time: "15:30 - 18:30", activity: "Fisika" },
+        ],
+        Kamis: [
+          {
+            time: "09:30 - 12:30",
+            activity: "Praktikum Algoritma pemrograman",
+          },
+          { time: "13:30 - 16:30", activity: "Matematika Diskrit" },
+        ],
+        Jumat: [
+          { time: "08:30 - 11:30", activity: "Algoritma pemrogramman" },
+          {
+            time: "13:30 - 14:30",
+            activity: "Internalisasi budaya dan pembentukan karakter",
+          },
+        ],
       };
 
       const button = document.getElementById("toggleSchedule");
@@ -69,34 +86,44 @@
         );
       }
 
-      // Function to check if the current time is within the schedule's time range
-      function isWithinTimeRange(timeRange) {
-        const [startTime, endTime] = timeRange.split(" - ");
+      // Function to check if the current time is within any of the schedule's time ranges
+      function isWithinTimeRange(schedule) {
         const now = new Date();
-        const start = convertToDate(startTime);
-        const end = convertToDate(endTime);
-
-        return now >= start && now <= end;
+        return schedule.some(({ time }) => {
+          const [startTime, endTime] = time.split(" - ");
+          const start = convertToDate(startTime);
+          const end = convertToDate(endTime);
+          return now >= start && now <= end;
+        });
       }
 
       button.addEventListener("click", () => {
-        const currentDay = new Date().toLocaleDateString("en-US", {
+        const currentDay = new Date().toLocaleDateString("id-ID", {
           weekday: "long",
         });
+
         const schedule = scheduleData[currentDay];
 
         if (!isScheduleVisible) {
-          if (schedule && isWithinTimeRange(schedule.time)) {
+          if (schedule && isWithinTimeRange(schedule)) {
             // Display the schedule when the current time is within the time range
+            const activeSchedule = schedule.find(({ time }) =>
+              isWithinTimeRange([{ time }])
+            );
             document.getElementById("day").textContent = currentDay;
-            document.getElementById("time").textContent = schedule.time;
-            document.getElementById("activity").textContent = schedule.activity;
+            document.getElementById("time").textContent = activeSchedule.time;
+            document.getElementById("activity").innerHTML =
+              "Lagi ada kelas nihh!😖😖🤓" +
+              "<br>" +
+              activeSchedule.activity +
+              "<br><br>" +
+              "Sabar ya, nanti juga balik kok!";
           } else {
             // Display message when no schedule is available for the current time
             document.getElementById("day").textContent = currentDay;
             document.getElementById("time").textContent = "Dia lagi free nihh!";
             document.getElementById("activity").textContent =
-              "Mungkin lagi tidur atau main game, coba chat/telpon aja!";
+              "Mungkin lagi tidur atau main game, coba chat/telpon aja!😼😼";
           }
           scheduleDiv.classList.remove("hidden");
           scheduleDiv.classList.add("fade-in");
